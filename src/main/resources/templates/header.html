@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+</head>
+<body ng-app="app" ng-controller="home as home">
+
+<div class="container">
+    <div th:fragment="header">
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-left">
+                    <a class="navbar-brand" href="#" th:href="@{/}">Home</a>
+                    <li><a href="#" th:href="@{/products}">Products</a></li>
+                    <li><a href="#" th:href="@{/product/new}">Create Product</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <a class="navbar-brand" href="#" th:href="@{/info}">Info</a>
+                    <a ng-show="!home.authenticated" class="navbar-brand" href="#" th:href="@{/login}">Login</a>
+                    <!--li ng-show="home.authenticated">
+                        <a>Logged in as: <span ng-bind="home.user"></span></a>
+                    </li>
+                    <li><a><button ng-click="home.logout()" class="btn btn-primary">Logout</button></a></li-->
+                </ul>
+            </div>
+        </nav>
+
+        <div class="jumbotron">
+            <div class="row text-center">
+                <img src="../../static/images/aghErasmus.png" width="400"
+                     th:src="@{/images/aghErasmus.png}"/>
+            </div>
+            <div class="row text-center">
+                <div class="">
+                    <h2>Web Application Technologies Class</h2>
+
+                    <h3>Spring on Heroku App</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/webjars/angularjs/angular.min.js"></script>
+<script type="text/javascript">
+    angular.module("app", []).controller("home", function($http) {
+        var self = this;
+        $http.get("/user").success(function(data) {
+            self.user = data.userAuthentication.details.id;
+            self.authenticated = true;
+            //alert("in");
+        }).error(function() {
+            //alert("not in");
+            self.user = "N/A";
+            self.authenticated = false;
+        });
+        self.logout = function() {
+            $http.post('/logout', {}).success(function(data) {
+                self.authenticated = false;
+                $location.path("/");
+            }).error(function() {
+                console.log("Logout failed")
+                self.authenticated = false;
+            });
+        };
+    });
+</script>
+
+</body>
+</html>
